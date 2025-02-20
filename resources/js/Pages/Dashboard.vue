@@ -95,7 +95,7 @@ const fetchAccountType = async () => {
         const { data } = await axiosIns.get('user/account_type?apikey=' + form.api_key)
 
         if (data.status) {
-            accountTypes.value = data.data.filter((item) => item.quality > 0)
+            accountTypes.value = data.data.filter((item) => item.quality > 0 && item.price < 100)
         }
     } catch (error) {
         accountTypes.value = []
@@ -260,7 +260,8 @@ watch(
                                         :key="item.id"
                                         :value="item.id"
                                     >
-                                        {{ item.name }} - {{ item.price }}đ
+                                        {{ item.name }} - {{ item.price }}đ - còn:
+                                        {{ item.quality }}
                                     </option>
                                 </select>
 
