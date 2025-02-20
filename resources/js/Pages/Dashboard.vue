@@ -50,29 +50,7 @@ const form = useForm({
 
 const modalValue = ref(false)
 const modalRef = ref()
-const listMail = ref([
-    {
-        mail: 'hoyamxhanti@hotmail.com',
-        pass: 'c0gr9926',
-        refresh_token:
-            'M.C524_BAY.0.U.-CncDTJElukWYfbqulqkOWk5kd384QppGdg*FW0Uc*iN*mZu1d!OOZ5Ogc6eC0AWmt8vnY*x3oz0kI8upxBCQ54MWFgQ68MJr9C6tWw8ngN9DtAM04tZBBEVer!OV75n8dicOQL*d9UDxQ!vAhTOKrFebIe2qclB6wuHETKcw9zq8uQMOprjbXt*K83sT3hrwhKZExoYghPmZ9pNgnZepOe8SiNZCN1sqp2HfC*RqGpGVI7Akrc7AXosrXeaLRx6h9pyPiP3GHRdlKTRqD00eILMehpINeSDALC8DqjmI8YUYVp5VBedExvXri!5ZaFaEOeugCssxZJprC!SXiT0WaPffbPt43fNTmHgJQirZQjKmZFSyx2jptaqjtNYELASZQPrJEuyYc!DEemyr7k!JGz*ZNpca9igOTeRoIG8vilFxtkYhJXkm*IMN2750lUwY!Q$$',
-        client_id: '8b4ba9dd-3ea5-4e5f-86f1-ddba2230dcf2',
-    },
-    {
-        mail: 'faeghkuxxxqzz1@hotmail.com',
-        pass: 'OxEdg7301',
-        refresh_token:
-            'M.C553_BAY.0.U.-CpJTTtnjfGn8jyurlLvq7HRHsr4UwfNgu472AHi47iEA!8qWChAVoPZgil8xqPeJRUoWDTsaWh6UF7MOVGbu6Th3KZEO2gw*vuRJBOklZBfTtcPZaWFUtGekP!!Mzqt9zZfeVDjBz88o!hoXLl9d9xsWgYowto9Fn6S4HpMzSSok1LdI*mDm3wOANaJTockXbZJ!Spw0f*ydCHIJXoVmn7GVcY2TUa*3fuCbceosuVHUWky*qbayTRMU8HObO0g2e7CeA13tdik*dVepUDt6RLyeqSWFY6cuaOwJVRKsgyZsGXv7K1ES*XjGz2V25Y!TuKKvPOqi1vLswEcr3313ihtnNW3U*K6Gv5f*2ChQZhWR0kqzrN2E1fCkjR!QMrYItV*pTHsgEnLkOxSSrfOxEO3Xur12bDXZa9KQkkVdNIRu8b72jm*jpuR7*RTbimv05A$$',
-        client_id: '8b4ba9dd-3ea5-4e5f-86f1-ddba2230dcf2',
-    },
-    {
-        mail: 'faeghkuddqzz1@hotmail.com',
-        pass: 'OxEdg7301',
-        refresh_token:
-            'M.C553_BAY.0.U.-CpJTTtnjfGn8jyurlLvq7HRHsr4UwfNgu472AHi47iEA!8qWChAVoPZgil8xqPeJRUoWDTsaWh6UF7MOVGbu6Th3KZEO2gw*vuRJBOklZBfTtcPZaWFUtGekP!!Mzqt9zZfeVDjBz88o!hoXLl9d9xsWgYowto9Fn6S4HpMzSSok1LdI*mDm3wOANaJTockXbZJ!Spw0f*ydCHIJXoVmn7GVcY2TUa*3fuCbceosuVHUWky*qbayTRMU8HObO0g2e7CeA13tdik*dVepUDt6RLyeqSWFY6cuaOwJVRKsgyZsGXv7K1ES*XjGz2V25Y!TuKKvPOqi1vLswEcr3313ihtnNW3U*K6Gv5f*2ChQZhWR0kqzrN2E1fCkjR!QMrYItV*pTHsgEnLkOxSSrfOxEO3Xur12bDXZa9KQkkVdNIRu8b72jm*jpuR7*RTbimv05A$$',
-        client_id: '8b4ba9dd-3ea5-4e5f-86f1-ddba2230dcf2',
-    },
-])
+const listMail = ref([])
 const accountTypes = ref([])
 const accountType = ref(null)
 const apiKeyStatus = ref(EMPTY)
@@ -161,10 +139,10 @@ const buyMail = async () => {
     }
 }
 
-const copyMail = async (index) => {
+const copyMail = async (index, onlyMail = false) => {
     try {
         const item = listMail.value[index]
-        await navigator.clipboard.writeText(item.mail + '|' + item.pass)
+        await navigator.clipboard.writeText(item.mail + (onlyMail ? '' : '|' + item.pass))
         item.mail_copied = true
         setTimeout(() => {
             item.mail_copied = false
@@ -368,7 +346,18 @@ watch(
                                             class="whitespace-nowrap px-3 py-4 font-medium text-gray-900 dark:text-white"
                                             scope="row"
                                         >
-                                            {{ item.mail }}
+                                            <p class="mb-1">{{ item.mail }}</p>
+                                            <button
+                                                class="mb-2 me-2 rounded-lg bg-blue-700 px-3 py-1.5 text-sm text-xs font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                                :class="{
+                                                    'cursor-not-allowed opacity-50': isLoading,
+                                                }"
+                                                :disabled="isLoading"
+                                                @click="copyMail(index, true)"
+                                            >
+                                                <span v-if="!item.mail_copied">Copy</span>
+                                                <span v-else>Copied!</span>
+                                            </button>
                                         </th>
                                         <td class="px-3 py-4">
                                             <p class="mb-1">{{ item.code ?? 'Chưa có' }}</p>
