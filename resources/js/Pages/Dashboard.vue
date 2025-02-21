@@ -62,7 +62,7 @@ onMounted(async () => {
         apiKeyStatus.value = (await checkBalance()) ? SUCCESS : ERROR
     }
 
-    fetchAccountType()
+    // fetchAccountType()
 })
 
 const checkBalance = async () => {
@@ -90,24 +90,46 @@ const applyKey = async () => {
     }
 }
 
+// const fetchAccountType = async () => {
+//     try {
+//         const { data } = await axiosIns.get('user/account_type?apikey=' + form.api_key)
+
+//         if (data.status) {
+//             accountTypes.value = data.data.filter((item) => item.quality > 0 && item.price < 100)
+//         }
+//     } catch (error) {
+//         accountTypes.value = []
+//     }
+// }
+
 const fetchAccountType = async () => {
     try {
         const { data } = await axiosIns.get('user/account_type?apikey=' + form.api_key)
 
-        if (data.status) {
-            accountTypes.value = data.data.filter((item) => item.quality > 0 && item.price < 100)
+        if (!data.status) {
+            throw new Error('')
         }
-    } catch (error) {
-        accountTypes.value = []
+
+        const firstItem = data.data.find((item) => item.price === 50 && item.quality > 0)
+
+        if (firstItem) {
+            return firstItem.id
+        } else {
+            throw new Error('')
+        }
+    } catch (err) {
+        throw new Error('')
     }
 }
 
 const buyMail = async () => {
     try {
+        const account_type = await fetchAccountType()
+
         const { data } = await axiosIns.get('user/buy', {
             params: {
                 apikey: form.api_key,
-                account_type: accountType.value,
+                account_type: account_type,
                 quality: 1,
                 type: 'full',
             },
@@ -115,7 +137,7 @@ const buyMail = async () => {
 
         if (!data.status) {
             modalValue.value = true
-            accountType.value = null
+            // accountType.value = null
             return
         }
 
@@ -133,9 +155,8 @@ const buyMail = async () => {
 
         listMail.value.unshift(result)
     } catch (error) {
-        console.log(error)
         modalValue.value = true
-        accountType.value = null
+        // accountType.value = null
     }
 }
 
@@ -249,7 +270,7 @@ watch(
                                 </div>
                             </div>
                             <div>
-                                <select
+                                <!-- <select
                                     v-model="accountType"
                                     class="inline-block w-2/3 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 md:w-1/3 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                                     :disabled="isLoading"
@@ -294,14 +315,14 @@ watch(
                                             stroke-width="2"
                                         />
                                     </svg>
-                                </button>
+                                </button> -->
                                 <button
                                     class="mb-2 me-2 ml-2 rounded-lg bg-green-700 px-5 py-3 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
                                     :class="{
                                         'cursor-not-allowed opacity-50':
-                                            apiKeyStatus != SUCCESS || isLoading || !accountType,
+                                            apiKeyStatus != SUCCESS || isLoading,
                                     }"
-                                    :disabled="apiKeyStatus != SUCCESS || isLoading || !accountType"
+                                    :disabled="apiKeyStatus != SUCCESS || isLoading"
                                     type="button"
                                     @click="buyMail"
                                 >
@@ -435,7 +456,7 @@ watch(
             @close="
                 () => {
                     modalValue = false
-                    fetchAccountType()
+                    // fetchAccountType()
                 }
             "
         >
