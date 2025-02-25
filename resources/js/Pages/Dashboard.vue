@@ -152,6 +152,8 @@ const buyMail = async () => {
     } catch (error) {
         modalValue.value = true
     }
+
+    checkBalance()
 }
 
 const copyMail = async (index, onlyMail = false) => {
