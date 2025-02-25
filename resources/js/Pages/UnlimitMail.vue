@@ -2,36 +2,13 @@
 import Modal from '@/Components/Modal.vue'
 import SecondaryButton from '@/Components/SecondaryButton.vue'
 import SvgLoading from '@/Components/SvgLoading.vue'
+import { useAxios } from '@/Composables/axiosIns'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, useForm } from '@inertiajs/vue3'
 import axios from 'axios'
 import { computed, onMounted, ref, watch } from 'vue'
 
-const axiosIns = axios.create({
-    baseURL: 'https://api.dongvanfb.net/',
-})
-
-axiosIns.interceptors.request.use(
-    (config) => {
-        isLoading.value = true
-        return config
-    },
-    (error) => {
-        isLoading.value = false
-        return Promise.reject(error)
-    },
-)
-
-axiosIns.interceptors.response.use(
-    (response) => {
-        isLoading.value = false
-        return response
-    },
-    (error) => {
-        isLoading.value = false
-        return Promise.reject(error)
-    },
-)
+const { axiosIns, requestLoading: isLoading } = useAxios('https://unlimitmail.com/api/')
 
 const EMPTY = 0
 const SUCCESS = 1
@@ -46,7 +23,6 @@ const props = defineProps({
 
 const form = useForm({
     api_key: props.api_key,
-    type: 1, // dongvanfb
 })
 
 const modalValue = ref(false)
@@ -55,7 +31,6 @@ const listMail = ref([])
 const myPrice = ref(0)
 const apiKeyStatus = ref(EMPTY)
 const isKeyChange = ref(false)
-const isLoading = ref(false)
 
 onMounted(async () => {
     if (form.api_key.length > 0) {
@@ -72,22 +47,26 @@ const priceFormat = computed(() => {
 
 const checkBalance = async () => {
     try {
-        const { data } = await axiosIns.get('user/balance?apikey=' + form.api_key)
+        const { data } = await axiosIns.get('user?token=' + form.api_key)
 
-        myPrice.value = data.balance ?? 0
+        if (data.success) {
+            myPrice.value = data.user.coin ?? 0
 
-        return data.status
+            return true
+        }
     } catch (error) {
-        myPrice.value = 0
-        return false
+        console.log(error)
     }
+
+    myPrice.value = 0
+    return false
 }
 
 const applyKey = async () => {
     const status = await checkBalance()
 
     if (status) {
-        form.post(route('apply_key', { page: 'dongvanfb' }), {
+        form.post(route('apply_key', { page: 'unlimitmail' }), {
             onSuccess: () => {
                 apiKeyStatus.value = SUCCESS
                 isKeyChange.value = false
@@ -98,45 +77,32 @@ const applyKey = async () => {
     }
 }
 
-const fetchAccountType = async () => {
-    try {
-        const { data } = await axiosIns.get('user/account_type?apikey=' + form.api_key)
+const getAvailableProductId = async () => {
+    const productIds = [5, 6] // hotmail, outlool
 
-        if (!data.status) {
-            throw new Error('')
-        }
+    const responses = await Promise.all(
+        productIds.map((id) =>
+            axiosIns
+                .get('quantity', { params: { token: form.api_key, product_id: id } })
+                .then(({ data }) => ({ id, quantity: parseInt(data?.data?.[0]?.quantity, 10) })),
+        ),
+    )
 
-        const firstItem = data.data.find((item) => item.price === 50 && item.quality > 0)
+    // Tìm product_id đầu tiên có quantity > 0
+    const availableProduct = responses.find((item) => item.quantity > 0)
 
-        if (firstItem) {
-            return firstItem.id
-        } else {
-            throw new Error('')
-        }
-    } catch (err) {
-        throw new Error('')
-    }
+    if (!availableProduct) throw new Error('Không có sản phẩm khả dụng')
+
+    return availableProduct.id
 }
 
 const buyMail = async () => {
     try {
-        const account_type = await fetchAccountType()
+        const product_id = await getAvailableProductId()
 
-        const { data } = await axiosIns.get('user/buy', {
-            params: {
-                apikey: form.api_key,
-                account_type: account_type,
-                quality: 1,
-                type: 'full',
-            },
-        })
+        const { data } = await axios.post(route('buy_unlimitmail'), { product_id })
 
-        if (!data.status) {
-            modalValue.value = true
-            return
-        }
-
-        const [mail, pass, refresh_token, client_id] = data.data.list_data[0].split('|')
+        const { email: mail, password: pass, refresh_token, client_id } = data.data[0]
 
         const result = {
             mail,
@@ -152,6 +118,9 @@ const buyMail = async () => {
     } catch (error) {
         modalValue.value = true
     }
+
+    // refresh price
+    checkBalance()
 }
 
 const copyMail = async (index, onlyMail = false) => {
@@ -221,14 +190,14 @@ watch(
 </script>
 
 <template>
-    <Head title="Dongvanfb" />
+    <Head title="Unlimitmail.com" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2
                 class="inline-block text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
             >
-                Dongvanfb.net
+                Unlimitmail.com
             </h2>
             <h2
                 class="text-md ml-auto inline-block font-semibold leading-tight text-green-800 dark:text-green-200"
@@ -408,12 +377,7 @@ watch(
         <Modal
             ref="modalRef"
             :show="modalValue"
-            @close="
-                () => {
-                    modalValue = false
-                    // fetchAccountType()
-                }
-            "
+            @close="modalValue = false"
         >
             <div class="p-6">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
