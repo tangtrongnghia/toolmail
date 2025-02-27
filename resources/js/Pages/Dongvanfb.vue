@@ -2,36 +2,12 @@
 import Modal from '@/Components/Modal.vue'
 import SecondaryButton from '@/Components/SecondaryButton.vue'
 import SvgLoading from '@/Components/SvgLoading.vue'
+import { useAxios } from '@/Composables/axiosIns'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, useForm } from '@inertiajs/vue3'
-import axios from 'axios'
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
-const axiosIns = axios.create({
-    baseURL: 'https://api.dongvanfb.net/',
-})
-
-axiosIns.interceptors.request.use(
-    (config) => {
-        isLoading.value = true
-        return config
-    },
-    (error) => {
-        isLoading.value = false
-        return Promise.reject(error)
-    },
-)
-
-axiosIns.interceptors.response.use(
-    (response) => {
-        isLoading.value = false
-        return response
-    },
-    (error) => {
-        isLoading.value = false
-        return Promise.reject(error)
-    },
-)
+const { axiosIns, requestLoading: isLoading } = useAxios('https://api.dongvanfb.net/')
 
 const EMPTY = 0
 const SUCCESS = 1
@@ -46,15 +22,14 @@ const props = defineProps({
 
 const form = useForm({
     api_key: props.api_key,
-    type: 1, // dongvanfb
 })
 
 const modalValue = ref(false)
 const modalRef = ref()
 const listMail = ref([])
+const myPrice = ref(0)
 const apiKeyStatus = ref(EMPTY)
 const isKeyChange = ref(false)
-const isLoading = ref(false)
 
 onMounted(async () => {
     if (form.api_key.length > 0) {
@@ -62,12 +37,22 @@ onMounted(async () => {
     }
 })
 
+const priceFormat = computed(() => {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+    }).format(myPrice.value)
+})
+
 const checkBalance = async () => {
     try {
         const { data } = await axiosIns.get('user/balance?apikey=' + form.api_key)
 
+        myPrice.value = data.balance ?? 0
+
         return data.status
     } catch (error) {
+        myPrice.value = 0
         return false
     }
 }
@@ -76,7 +61,7 @@ const applyKey = async () => {
     const status = await checkBalance()
 
     if (status) {
-        form.post(route('apply_key'), {
+        form.post(route('apply_key', { page: 'dongvanfb' }), {
             onSuccess: () => {
                 apiKeyStatus.value = SUCCESS
                 isKeyChange.value = false
@@ -141,6 +126,8 @@ const buyMail = async () => {
     } catch (error) {
         modalValue.value = true
     }
+
+    checkBalance()
 }
 
 const copyMail = async (index, onlyMail = false) => {
@@ -210,12 +197,19 @@ watch(
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Dongvanfb" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                Dashboard
+            <h2
+                class="inline-block text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
+            >
+                Dongvanfb.net
+            </h2>
+            <h2
+                class="text-md ml-auto inline-block font-semibold leading-tight text-green-800 dark:text-green-200"
+            >
+                {{ priceFormat }}
             </h2>
         </template>
 
@@ -253,52 +247,6 @@ watch(
                                 </div>
                             </div>
                             <div>
-                                <!-- <select
-                                    v-model="accountType"
-                                    class="inline-block w-2/3 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 md:w-1/3 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                                    :disabled="isLoading"
-                                >
-                                    <option :value="null">Chọn loại Mail</option>
-                                    <option
-                                        v-for="item in accountTypes"
-                                        :key="item.id"
-                                        :value="item.id"
-                                    >
-                                        {{ item.name }} - {{ item.price }}đ - còn:
-                                        {{ item.quality }}
-                                    </option>
-                                </select>
-
-                                <button
-                                    class="mb-2 ml-2 rounded-lg bg-teal-700 px-3 py-2.5 text-sm font-medium text-white hover:bg-teal-800 focus:outline-none focus:ring-4 focus:ring-teal-300 dark:bg-teal-600 dark:hover:bg-teal-700 dark:focus:ring-teal-800"
-                                    :class="{
-                                        'cursor-not-allowed opacity-50':
-                                            apiKeyStatus != SUCCESS || isLoading,
-                                    }"
-                                    :disabled="apiKeyStatus != SUCCESS || isLoading"
-                                    type="button"
-                                    @click="fetchAccountType"
-                                >
-                                    <SvgLoading v-show="isLoading" />
-                                    <svg
-                                        v-show="!isLoading"
-                                        aria-hidden="true"
-                                        class="inline h-4 w-4 text-white"
-                                        fill="none"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        width="24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"
-                                            stroke="currentColor"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                        />
-                                    </svg>
-                                </button> -->
                                 <button
                                     class="mb-2 me-2 ml-2 rounded-lg bg-green-700 px-5 py-3 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
                                     :class="{
@@ -334,7 +282,7 @@ watch(
                                             Facebook Code
                                         </th>
                                         <th
-                                            class="px-6 py-3"
+                                            class="break-all px-6 py-3"
                                             scope="col"
                                         >
                                             Mail|Password
@@ -348,10 +296,14 @@ watch(
                                         class="border-b border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
                                     >
                                         <th
-                                            class="whitespace-nowrap px-3 py-4 font-medium text-gray-900 dark:text-white"
+                                            class="whitespace-nowrap px-1 py-4 font-medium text-gray-900 md:px-3 dark:text-white"
                                             scope="row"
                                         >
-                                            <p class="mb-1">{{ item.mail }}</p>
+                                            <div class="mb-1 w-[100px] md:w-auto">
+                                                <p class="truncate">
+                                                    {{ item.mail }}
+                                                </p>
+                                            </div>
                                             <button
                                                 class="mb-2 me-2 rounded-lg bg-blue-700 px-3 py-1.5 text-sm text-xs font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                                                 :class="{
@@ -364,7 +316,7 @@ watch(
                                                 <span v-else>Copied!</span>
                                             </button>
                                         </th>
-                                        <td class="px-3 py-4">
+                                        <td class="px-1 py-4">
                                             <p class="mb-1">{{ item.code ?? 'Chưa có' }}</p>
                                             <button
                                                 class="mb-2 me-2 rounded-lg bg-teal-700 px-3 py-1.5 text-sm text-xs font-medium text-white hover:bg-teal-800 focus:outline-none focus:ring-4 focus:ring-teal-300 dark:bg-teal-600 dark:hover:bg-teal-700 dark:focus:ring-teal-800"

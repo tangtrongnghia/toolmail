@@ -7,7 +7,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, useForm } from '@inertiajs/vue3'
 import { computed, onMounted, ref, watch } from 'vue'
 
-const { axiosIns, requestLoading: isLoading } = useAxios('https://api.dongvanfb.net/')
+const { axiosIns, requestLoading: isLoading } = useAxios('https://api.muamail.store/')
 
 const EMPTY = 0
 const SUCCESS = 1
@@ -46,7 +46,7 @@ const priceFormat = computed(() => {
 
 const checkBalance = async () => {
     try {
-        const { data } = await axiosIns.get('user/balance?apikey=' + form.api_key)
+        const { data } = await axiosIns.get('users/balance/?api_key=' + form.api_key)
 
         myPrice.value = data.balance ?? 0
 
@@ -204,7 +204,7 @@ watch(
             <h2
                 class="inline-block text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
             >
-                Dongvanfb.net
+                Muamail.store
             </h2>
             <h2
                 class="text-md ml-auto inline-block font-semibold leading-tight text-green-800 dark:text-green-200"

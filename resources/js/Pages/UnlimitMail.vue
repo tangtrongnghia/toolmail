@@ -5,7 +5,6 @@ import SvgLoading from '@/Components/SvgLoading.vue'
 import { useAxios } from '@/Composables/axiosIns'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, useForm } from '@inertiajs/vue3'
-import axios from 'axios'
 import { computed, onMounted, ref, watch } from 'vue'
 
 const { axiosIns, requestLoading: isLoading } = useAxios('https://unlimitmail.com/api/')
@@ -100,7 +99,12 @@ const buyMail = async () => {
     try {
         const product_id = await getAvailableProductId()
 
-        const { data } = await axios.post(route('buy_unlimitmail'), { product_id })
+        const { data } = await axiosIns.post('buyHotMailUd', {
+            product_id,
+            token: form.api_key,
+            quantity: 1,
+            type: 'email_pass_refresh_client',
+        })
 
         const { email: mail, password: pass, refresh_token, client_id } = data.data[0]
 
@@ -115,12 +119,12 @@ const buyMail = async () => {
         }
 
         listMail.value.unshift(result)
+
+        // refresh price
+        checkBalance()
     } catch (error) {
         modalValue.value = true
     }
-
-    // refresh price
-    checkBalance()
 }
 
 const copyMail = async (index, onlyMail = false) => {
@@ -289,10 +293,14 @@ watch(
                                         class="border-b border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
                                     >
                                         <th
-                                            class="whitespace-nowrap px-3 py-4 font-medium text-gray-900 dark:text-white"
+                                            class="whitespace-nowrap px-1 py-4 font-medium text-gray-900 md:px-3 dark:text-white"
                                             scope="row"
                                         >
-                                            <p class="mb-1">{{ item.mail }}</p>
+                                            <div class="mb-1 w-[100px] md:w-auto">
+                                                <p class="truncate">
+                                                    {{ item.mail }}
+                                                </p>
+                                            </div>
                                             <button
                                                 class="mb-2 me-2 rounded-lg bg-blue-700 px-3 py-1.5 text-sm text-xs font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                                                 :class="{
@@ -305,7 +313,7 @@ watch(
                                                 <span v-else>Copied!</span>
                                             </button>
                                         </th>
-                                        <td class="px-3 py-4">
+                                        <td class="px-1 py-4">
                                             <p class="mb-1">{{ item.code ?? 'Chưa có' }}</p>
                                             <button
                                                 class="mb-2 me-2 rounded-lg bg-teal-700 px-3 py-1.5 text-sm text-xs font-medium text-white hover:bg-teal-800 focus:outline-none focus:ring-4 focus:ring-teal-300 dark:bg-teal-600 dark:hover:bg-teal-700 dark:focus:ring-teal-800"

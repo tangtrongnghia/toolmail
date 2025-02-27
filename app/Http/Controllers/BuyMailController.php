@@ -40,8 +40,8 @@ class BuyMailController extends Controller
                 break;
 
             case self::MUAMAIL:
-                $render = Inertia::render('Dongvanfb', [
-                    'api_key' => $request->user()->dongvanfb_key ?? ''
+                $render = Inertia::render('Muamail', [
+                    'api_key' => $request->user()->muamail_key ?? ''
                 ]);
                 break;
 

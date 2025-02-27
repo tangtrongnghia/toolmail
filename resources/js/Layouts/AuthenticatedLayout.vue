@@ -144,7 +144,7 @@ const showingNavigationDropdown = ref(false)
                             :active="route().current('dashboard', { page: null })"
                             :href="route('dashboard')"
                         >
-                            Dashboard
+                            Dongvanfb
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :active="route().current('dashboard', { page: 'unlimitmail' })"
