@@ -48,9 +48,9 @@ const checkBalance = async () => {
     try {
         const { data } = await axiosIns.get('users/balance/?api_key=' + form.api_key)
 
-        myPrice.value = data.balance ?? 0
+        myPrice.value = data.data ?? 0
 
-        return data.status
+        return data.is_success
     } catch (error) {
         myPrice.value = 0
         return false
@@ -61,7 +61,7 @@ const applyKey = async () => {
     const status = await checkBalance()
 
     if (status) {
-        form.post(route('apply_key', { page: 'dongvanfb' }), {
+        form.post(route('apply_key', { page: 'muamail' }), {
             onSuccess: () => {
                 apiKeyStatus.value = SUCCESS
                 isKeyChange.value = false
@@ -71,16 +71,15 @@ const applyKey = async () => {
         apiKeyStatus.value = ERROR
     }
 }
-
 const fetchAccountType = async () => {
     try {
-        const { data } = await axiosIns.get('user/account_type?apikey=' + form.api_key)
+        const { data } = await axiosIns.get('products/get-stock')
 
-        if (!data.status) {
+        if (!data.is_success) {
             throw new Error('')
         }
 
-        const firstItem = data.data.find((item) => item.price === 50 && item.quality > 0)
+        const firstItem = data.data.find((item) => item.price <= 35 && item.quantity > 0)
 
         if (firstItem) {
             return firstItem.id
@@ -96,21 +95,20 @@ const buyMail = async () => {
     try {
         const account_type = await fetchAccountType()
 
-        const { data } = await axiosIns.get('user/buy', {
+        const { data } = await axiosIns.get('products/buy', {
             params: {
-                apikey: form.api_key,
-                account_type: account_type,
-                quality: 1,
-                type: 'full',
+                api_key: form.api_key,
+                id: account_type,
+                quantity: 1,
             },
         })
 
-        if (!data.status) {
+        if (!data.is_success) {
             modalValue.value = true
             return
         }
 
-        const [mail, pass, refresh_token, client_id] = data.data.list_data[0].split('|')
+        const [mail, pass, client_id, refresh_token] = data.data[0].split('|')
 
         const result = {
             mail,
@@ -123,11 +121,11 @@ const buyMail = async () => {
         }
 
         listMail.value.unshift(result)
+
+        checkBalance()
     } catch (error) {
         modalValue.value = true
     }
-
-    checkBalance()
 }
 
 const copyMail = async (index, onlyMail = false) => {

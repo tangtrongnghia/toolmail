@@ -29,25 +29,27 @@ class BuyMailController extends Controller
         switch ($page) {
             case null:
                 $render = Inertia::render('Dashboard', [
-                    'api_key' => $request->user()->dongvanfb_key ?? ''
+                    'dongvanfb_key' => $user->dongvanfb_key ?? '',
+                    'muamail_key' => $user->muamail_key ?? '',
+                    'unlimitmail_key' => $user->unlimitmail_key ?? '',
                 ]);
                 break;
 
             case self::DONGVANFB:
                 $render = Inertia::render('Dongvanfb', [
-                    'api_key' => $request->user()->dongvanfb_key ?? ''
+                    'api_key' => $user->dongvanfb_key ?? ''
                 ]);
                 break;
 
             case self::MUAMAIL:
                 $render = Inertia::render('Muamail', [
-                    'api_key' => $request->user()->muamail_key ?? ''
+                    'api_key' => $user->muamail_key ?? ''
                 ]);
                 break;
 
             case self::UNLIMITMAIL:
                 $render = Inertia::render('UnlimitMail', [
-                    'api_key' => $request->user()->unlimitmail_key ?? ''
+                    'api_key' => $user->unlimitmail_key ?? ''
                 ]);
                 break;
 

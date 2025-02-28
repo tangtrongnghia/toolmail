@@ -33,6 +33,14 @@ const showingNavigationDropdown = ref(false)
                                     :active="route().current('dashboard', { page: null })"
                                     :href="route('dashboard')"
                                 >
+                                    Dashboard
+                                </NavLink>
+                            </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink
+                                    :active="route().current('dashboard', { page: 'dongvanfb' })"
+                                    :href="route('dashboard', { page: 'dongvanfb' })"
+                                >
                                     Dongvanfb
                                 </NavLink>
                             </div>
@@ -42,6 +50,14 @@ const showingNavigationDropdown = ref(false)
                                     :href="route('dashboard', { page: 'unlimitmail' })"
                                 >
                                     Unlimitmail
+                                </NavLink>
+                            </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink
+                                    :active="route().current('dashboard', { page: 'muamail' })"
+                                    :href="route('dashboard', { page: 'muamail' })"
+                                >
+                                    Muamailstore
                                 </NavLink>
                             </div>
                         </div>
@@ -144,6 +160,12 @@ const showingNavigationDropdown = ref(false)
                             :active="route().current('dashboard', { page: null })"
                             :href="route('dashboard')"
                         >
+                            Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :active="route().current('dashboard', { page: 'dongvanfb' })"
+                            :href="route('dashboard', { page: 'dongvanfb' })"
+                        >
                             Dongvanfb
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
@@ -151,6 +173,12 @@ const showingNavigationDropdown = ref(false)
                             :href="route('dashboard', { page: 'unlimitmail' })"
                         >
                             Unlimitmail
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :active="route().current('dashboard', { page: 'muamail' })"
+                            :href="route('dashboard', { page: 'muamail' })"
+                        >
+                            Muamailstore
                         </ResponsiveNavLink>
                     </div>
 
