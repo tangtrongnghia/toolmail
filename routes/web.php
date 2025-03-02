@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BuyMailController;
+use App\Http\Controllers\FacebookUidController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/{page}', [BuyMailController::class, 'applyKey'])->name('apply_key');
 
     Route::post('/dashboard/unlimitmail/buymail', [BuyMailController::class, 'buyMailUnlimit'])->name('buy_unlimitmail');
+
+    // UID
+    Route::get('/facebook-uid', [FacebookUidController::class, 'index'])->name('facebook_uid.index');
+    Route::post('/facebook-uid', [FacebookUidController::class, 'getfacebookUid'])->name('facebook_uid.post');
 });
 
 require __DIR__.'/auth.php';

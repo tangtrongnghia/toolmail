@@ -60,6 +60,14 @@ const showingNavigationDropdown = ref(false)
                                     Muamailstore
                                 </NavLink>
                             </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink
+                                    :active="route().current('facebook_uid.index')"
+                                    :href="route('facebook_uid.index')"
+                                >
+                                    Get UID
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
@@ -179,6 +187,12 @@ const showingNavigationDropdown = ref(false)
                             :href="route('dashboard', { page: 'muamail' })"
                         >
                             Muamailstore
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :active="route().current('facebook_uid.index')"
+                            :href="route('facebook_uid.index')"
+                        >
+                            Get UID
                         </ResponsiveNavLink>
                     </div>
 
