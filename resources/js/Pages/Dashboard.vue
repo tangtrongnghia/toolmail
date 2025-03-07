@@ -19,6 +19,10 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    sptmail_key: {
+        type: String,
+        required: true,
+    },
 })
 
 const form = useForm({
@@ -47,18 +51,27 @@ const vendors = ref([
         price: 0,
         status: false,
     },
+    {
+        name: 'SptMail',
+        logo: '/assets/images/sptmail.jpg',
+        route: 'sptmail',
+        price: 0,
+        status: false,
+    },
 ])
 
 const formInput = ref({
     dongvanfb_key: props.dongvanfb_key,
     unlimitmail_key: props.unlimitmail_key,
     muamail_key: props.muamail_key,
+    sptmail_key: props.sptmail_key,
 })
 
 onMounted(() => {
     checkBalanceMuamailstore()
     checkBalanceUnlimitmail()
     checkBalanceDongvanfb()
+    checkBalanceSptMail()
 })
 
 const applyKey = async (routeName) => {
@@ -73,6 +86,9 @@ const applyKey = async (routeName) => {
             break
         case 'muamail':
             result = await checkBalanceMuamailstore()
+            break
+        case 'sptmail':
+            result = await checkBalanceSptMail()
             break
     }
 
@@ -132,6 +148,24 @@ const checkBalanceMuamailstore = async () => {
         vendor.status = data.is_success
 
         return data.is_success
+    } catch (error) {
+        vendor.price = 0
+        return false
+    }
+}
+
+const checkBalanceSptMail = async () => {
+    const vendor = vendors.value.find((v) => v.route === 'sptmail')
+
+    try {
+        const { data } = await axiosIns.get(
+            'https://api.sptmail.com/api/auth/profile?apiKey=' + formInput.value.sptmail_key,
+        )
+
+        vendor.price = data.user.balanceInWallet ?? 0 // Thay đổi giá trị price theo mong muốn
+        vendor.status = data.success
+
+        return data.success
     } catch (error) {
         vendor.price = 0
         return false

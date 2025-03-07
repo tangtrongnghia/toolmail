@@ -7,7 +7,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, useForm } from '@inertiajs/vue3'
 import { computed, onMounted, ref, watch } from 'vue'
 
-const { axiosIns, requestLoading: isLoading } = useAxios('https://api.dongvanfb.net/')
+const { axiosIns, requestLoading: isLoading } = useAxios('https://api.sptmail.com/')
 
 const EMPTY = 0
 const SUCCESS = 1
@@ -46,11 +46,11 @@ const priceFormat = computed(() => {
 
 const checkBalance = async () => {
     try {
-        const { data } = await axiosIns.get('user/balance?apikey=' + form.api_key)
+        const { data } = await axiosIns.get('api/auth/profile?apiKey=' + form.api_key)
 
-        myPrice.value = data.balance ?? 0
+        myPrice.value = data.user.balanceInWallet ?? 0
 
-        return data.status
+        return data.success
     } catch (error) {
         myPrice.value = 0
         return false
@@ -72,57 +72,34 @@ const applyKey = async () => {
     }
 }
 
-const fetchAccountType = async () => {
-    try {
-        const { data } = await axiosIns.get('user/account_type?apikey=' + form.api_key)
-
-        if (!data.status) {
-            throw new Error('')
-        }
-
-        const firstItem = data.data.find((item) => item.price === 50 && item.quality > 0)
-
-        if (firstItem) {
-            return firstItem.id
-        } else {
-            throw new Error('')
-        }
-    } catch (err) {
-        throw new Error('')
-    }
-}
-
 const buyMail = async () => {
     try {
-        const account_type = await fetchAccountType()
-
-        const { data } = await axiosIns.get('user/buy', {
+        const { data } = await axiosIns.get('api/otp-services/mail-otp-rental', {
             params: {
-                apikey: form.api_key,
-                account_type: account_type,
-                quality: 1,
-                type: 'full',
+                apiKey: form.api_key,
+                otpServiceCode: 'facebook',
             },
         })
 
-        if (!data.status) {
+        if (!data.success) {
             modalValue.value = true
             return
         }
 
-        const [mail, pass, refresh_token, client_id] = data.data.list_data[0].split('|')
+        const mail = data.gmail
 
         const result = {
             mail,
-            pass,
-            refresh_token,
-            client_id,
+            pass: null,
+            refresh_token: null,
+            client_id: null,
             code: null,
             code_copied: false,
             mail_copied: false,
         }
 
         listMail.value.unshift(result)
+
         checkBalance()
     } catch (error) {
         modalValue.value = true
@@ -159,15 +136,12 @@ const fetchFacebookCode = async (index) => {
     try {
         const item = listMail.value[index]
 
-        const { data } = await axiosIns.post('https://tools.dongvanfb.net/api/get_code_oauth2', {
-            email: item.mail,
-            refresh_token: item.refresh_token,
-            client_id: item.client_id,
-            type: 'facebook',
+        const { data } = await axiosIns.get('api/otp-services/mail-otp-lookup', {
+            params: { apiKey: form.api_key, otpServiceCode: 'facebook', gmail: item.mail },
         })
 
-        if (data.status) {
-            item.code = data.code
+        if (data.status == 'SUCCESS') {
+            item.code = data.otp
         }
     } catch (error) {
         console.log(error)
@@ -196,14 +170,14 @@ watch(
 </script>
 
 <template>
-    <Head title="Dongvanfb" />
+    <Head title="SPT Mail" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2
                 class="inline-block text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
             >
-                Dongvanfb.net
+                SPT Mail
             </h2>
             <h2
                 class="text-md ml-auto inline-block font-semibold leading-tight text-green-800 dark:text-green-200"
@@ -347,7 +321,7 @@ watch(
                                                     'cursor-not-allowed opacity-50': !item.code,
                                                 }"
                                                 :disabled="!item.code"
-                                                @click="copyCode(index)"
+                                                @click="copyCode(index, true)"
                                             >
                                                 <span v-if="!item.code_copied">Copy</span>
                                                 <span v-else>Copied!</span>

@@ -24,6 +24,7 @@ class User extends Authenticatable
         'dongvanfb_key',
         'muamail_key',
         'unlimitmail_key',
+        'sptmail_key',
     ];
 
     /**

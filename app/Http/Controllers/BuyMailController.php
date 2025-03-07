@@ -14,6 +14,7 @@ class BuyMailController extends Controller
     const DONGVANFB = 'dongvanfb';
     const MUAMAIL = 'muamail';
     const UNLIMITMAIL = 'unlimitmail';
+    const SPTMAIL = 'sptmail';
 
     /**
      * Display the user's profile form.
@@ -29,6 +30,7 @@ class BuyMailController extends Controller
                     'dongvanfb_key' => $user->dongvanfb_key ?? '',
                     'muamail_key' => $user->muamail_key ?? '',
                     'unlimitmail_key' => $user->unlimitmail_key ?? '',
+                    'sptmail_key' => $user->sptmail_key ?? '',
                 ]);
                 break;
 
@@ -49,6 +51,11 @@ class BuyMailController extends Controller
                     'api_key' => $user->unlimitmail_key ?? ''
                 ]);
                 break;
+            case self::SPTMAIL:
+                $render = Inertia::render('SptMail', [
+                    'api_key' => $user->sptmail_key ?? ''
+                ]);
+                break;
 
             default:
                 abort(404);
@@ -67,6 +74,7 @@ class BuyMailController extends Controller
             self::DONGVANFB => 'dongvanfb_key',
             self::MUAMAIL => 'muamail_key',
             self::UNLIMITMAIL => 'unlimitmail_key',
+            self::SPTMAIL => 'sptmail_key',
             default => abort(404),
         };
 
