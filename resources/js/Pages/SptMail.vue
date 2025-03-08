@@ -66,7 +66,7 @@ const applyKey = async () => {
     const status = await checkBalance()
 
     if (status) {
-        form.post(route('apply_key', { page: 'dongvanfb' }), {
+        form.post(route('apply_key', { page: 'sptmail' }), {
             onSuccess: () => {
                 apiKeyStatus.value = SUCCESS
                 isKeyChange.value = false
