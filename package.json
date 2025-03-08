@@ -27,6 +27,7 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "@vueuse/core": "^12.8.2",
         "flowbite": "^3.1.2"
     }
 }

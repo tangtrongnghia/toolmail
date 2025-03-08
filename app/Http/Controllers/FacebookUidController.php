@@ -8,6 +8,7 @@ use GuzzleHttp\Promise\Utils;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use OTPHP\TOTP;
 
 class FacebookUidController extends Controller
 {
@@ -61,5 +62,16 @@ class FacebookUidController extends Controller
         ksort($uids);
 
         return array_values($uids);
+    }
+
+    public function google2FA(Request $request)
+    {
+        try {
+            $totp = TOTP::create($request->input('secretKey'));
+
+            return $totp->now();
+        } catch (\Throwable $th) {
+            return '';
+        }
     }
 }

@@ -30,6 +30,10 @@ Route::middleware('auth')->group(function () {
     // UID
     Route::get('/facebook-uid', [FacebookUidController::class, 'index'])->name('facebook_uid.index');
     Route::post('/facebook-uid', [FacebookUidController::class, 'getfacebookUid'])->name('facebook_uid.post');
+
+    // Google 2FA
+    Route::get('/google2fa', [FacebookUidController::class, 'google2FA'])->name('google_2fa');
+
 });
 
 require __DIR__.'/auth.php';
