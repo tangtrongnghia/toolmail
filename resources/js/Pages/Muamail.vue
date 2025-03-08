@@ -79,7 +79,9 @@ const fetchAccountType = async () => {
             throw new Error('')
         }
 
-        const firstItem = data.data.find((item) => item.price <= 35 && item.quantity > 0)
+        const firstItem = data.data.find(
+            (item) => [2, 6].includes(item.id) <= 50 && item.quantity > 0,
+        )
 
         if (firstItem) {
             return firstItem.id
