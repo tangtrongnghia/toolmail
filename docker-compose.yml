@@ -8,6 +8,7 @@ services:
     container_name: laravel_app
     volumes:
       - .:/var/www/html
+      - ./docker/php/conf/php.ini:/usr/local/etc/php/php.ini
     depends_on:
       - mysql
     networks:
