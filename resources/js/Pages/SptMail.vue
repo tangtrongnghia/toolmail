@@ -7,7 +7,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, useForm } from '@inertiajs/vue3'
 import { computed, onMounted, ref, watch } from 'vue'
 
-const { axiosIns, requestLoading: isLoading } = useAxios('https://api.sptmail.com/')
+const { axiosIns, requestLoading } = useAxios('https://api.sptmail.com/')
 
 const EMPTY = 0
 const SUCCESS = 1
@@ -30,6 +30,11 @@ const listMail = ref([])
 const myPrice = ref(0)
 const apiKeyStatus = ref(EMPTY)
 const isKeyChange = ref(false)
+const isloadingBuying = ref(false)
+
+const isLoading = computed(() => {
+    return isloadingBuying.value || requestLoading.value
+})
 
 onMounted(async () => {
     if (form.api_key.length > 0) {
@@ -72,38 +77,78 @@ const applyKey = async () => {
     }
 }
 
+// const buyMail = async () => {
+//     try {
+//         const { data } = await axiosIns.get('api/otp-services/mail-otp-rental', {
+//             params: {
+//                 apiKey: form.api_key,
+//                 otpServiceCode: 'facebook',
+//             },
+//         })
+
+//         if (!data.success) {
+//             modalValue.value = true
+//             return
+//         }
+
+//         const mail = data.gmail
+
+//         const result = {
+//             mail,
+//             pass: null,
+//             refresh_token: null,
+//             client_id: null,
+//             code: null,
+//             code_copied: false,
+//             mail_copied: false,
+//         }
+
+//         listMail.value.unshift(result)
+
+//         checkBalance()
+//     } catch (error) {
+//         modalValue.value = true
+//     }
+// }
+
 const buyMail = async () => {
-    try {
-        const { data } = await axiosIns.get('api/otp-services/mail-otp-rental', {
-            params: {
-                apiKey: form.api_key,
-                otpServiceCode: 'facebook',
-            },
-        })
+    let isSuccess = false
+    isloadingBuying.value = true
 
-        if (!data.success) {
-            modalValue.value = true
-            return
+    while (!isSuccess) {
+        try {
+            const { data } = await axiosIns.get('api/otp-services/mail-otp-rental', {
+                params: {
+                    apiKey: form.api_key,
+                    otpServiceCode: 'facebook',
+                },
+            })
+
+            if (data.success) {
+                const mail = data.gmail
+
+                const result = {
+                    mail,
+                    pass: null,
+                    refresh_token: null,
+                    client_id: null,
+                    code: null,
+                    code_copied: false,
+                    mail_copied: false,
+                }
+
+                listMail.value.unshift(result)
+                checkBalance()
+                isSuccess = true // Thoát vòng lặp khi thành công
+            }
+        } catch (error) {
+            console.error('Request failed, retrying...', error)
         }
 
-        const mail = data.gmail
-
-        const result = {
-            mail,
-            pass: null,
-            refresh_token: null,
-            client_id: null,
-            code: null,
-            code_copied: false,
-            mail_copied: false,
-        }
-
-        listMail.value.unshift(result)
-
-        checkBalance()
-    } catch (error) {
-        modalValue.value = true
+        await new Promise((resolve) => setTimeout(resolve, 1000)) // Delay 1 giây trước khi thử lại
     }
+
+    isloadingBuying.value = false
 }
 
 const copyMail = async (index, onlyMail = false) => {
