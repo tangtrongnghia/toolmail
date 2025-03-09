@@ -88,40 +88,6 @@ const applyKey = async () => {
     }
 }
 
-// const buyMail = async () => {
-//     try {
-//         const { data } = await axiosIns.get('api/otp-services/mail-otp-rental', {
-//             params: {
-//                 apiKey: form.api_key,
-//                 otpServiceCode: 'facebook',
-//             },
-//         })
-
-//         if (!data.success) {
-//             modalValue.value = true
-//             return
-//         }
-
-//         const mail = data.gmail
-
-//         const result = {
-//             mail,
-//             pass: null,
-//             refresh_token: null,
-//             client_id: null,
-//             code: null,
-//             code_copied: false,
-//             mail_copied: false,
-//         }
-
-//         listMail.value.unshift(result)
-
-//         checkBalance()
-//     } catch (error) {
-//         modalValue.value = true
-//     }
-// }
-
 const buyMail = async () => {
     let isSuccess = false
     isloadingBuying.value = true
@@ -429,12 +395,7 @@ watch(
         <Modal
             ref="modalRef"
             :show="modalValue"
-            @close="
-                () => {
-                    modalValue = false
-                    // fetchAccountType()
-                }
-            "
+            @close="modalValue = false"
         >
             <div class="p-6">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">

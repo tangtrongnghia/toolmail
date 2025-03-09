@@ -1,4 +1,5 @@
 <script setup>
+import Google2FA from '@/Components/Google2FA.vue'
 import Modal from '@/Components/Modal.vue'
 import SecondaryButton from '@/Components/SecondaryButton.vue'
 import SvgLoading from '@/Components/SvgLoading.vue'
@@ -210,8 +211,8 @@ watch(
             </h2>
         </template>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="pt-[3rem]">
+            <div class="mx-auto min-h-[350px] max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -279,7 +280,7 @@ watch(
                                             Facebook Code
                                         </th>
                                         <th
-                                            class="px-6 py-3"
+                                            class="break-all px-6 py-3"
                                             scope="col"
                                         >
                                             Mail|Password
@@ -375,12 +376,24 @@ watch(
                                             </button>
                                         </td>
                                     </tr>
+                                    <tr
+                                        v-if="!listMail.length"
+                                        class="border-b border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+                                    >
+                                        <td
+                                            class="px-1 py-4"
+                                            colspan="3"
+                                        >
+                                            Có cái nịt
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
+            <Google2FA />
         </div>
         <Modal
             ref="modalRef"
