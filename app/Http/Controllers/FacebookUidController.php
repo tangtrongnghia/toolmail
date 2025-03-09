@@ -67,7 +67,11 @@ class FacebookUidController extends Controller
     public function google2FA(Request $request)
     {
         try {
-            $totp = TOTP::create($request->input('secretKey'));
+            $secretKey = $request->input('secretKey');
+            $formattedKey = preg_replace('/[^a-zA-Z]/', '', $secretKey);
+
+
+            $totp = TOTP::create($formattedKey);
 
             return $totp->now();
         } catch (\Throwable $th) {
