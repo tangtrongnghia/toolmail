@@ -18,7 +18,7 @@ const fetchData = async () => {
 
         const response = await axios.get(route('google_2fa', { secretKey: secretKey.value }))
 
-        code.value = response.data
+        code.value = String(response.data)
     } catch (error) {
         console.error('Lỗi khi gọi API:', error)
     }
@@ -31,7 +31,7 @@ const copyCode = async () => {
         await navigator.clipboard.writeText(code.value)
         isCopied.value = true
         setTimeout(() => {
-            isCopied.value.valuecode_copied = false
+            isCopied.value = false
         }, 1000)
     } catch (err) {
         console.log(err)
@@ -61,7 +61,7 @@ watch(secretKey, (v) => {
                             v-model="secretKey"
                             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                             placeholder="API Key"
-                            @input="secretKey = secretKey.replace(/[^a-zA-Z]/g, '')"
+                            @input="secretKey = secretKey.replace(/[^a-zA-Z0-9]/g, '')"
                         />
                     </div>
 

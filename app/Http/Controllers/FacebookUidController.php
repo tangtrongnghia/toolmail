@@ -68,7 +68,7 @@ class FacebookUidController extends Controller
     {
         try {
             $secretKey = $request->input('secretKey');
-            $formattedKey = preg_replace('/[^a-zA-Z]/', '', $secretKey);
+            $formattedKey = preg_replace('/[^a-zA-Z0-9]/', '', $secretKey);
 
 
             $totp = TOTP::create($formattedKey);
