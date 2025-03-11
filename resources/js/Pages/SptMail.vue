@@ -88,45 +88,65 @@ const applyKey = async () => {
     }
 }
 
-const buyMail = async () => {
-    let isSuccess = false
-    isloadingBuying.value = true
+const worker = new Worker('/js/workers/worker.js', { type: 'module' })
 
-    while (!isSuccess) {
-        try {
-            const { data } = await axiosIns.get('api/otp-services/mail-otp-rental', {
-                params: {
-                    apiKey: form.api_key,
-                    otpServiceCode: 'facebook',
-                },
-            })
-
-            if (data.success) {
-                const mail = data.gmail
-
-                const result = {
-                    mail,
-                    pass: null,
-                    refresh_token: null,
-                    client_id: null,
-                    code: null,
-                    code_copied: false,
-                    mail_copied: false,
-                }
-
-                listMail.value.unshift(result)
-                checkBalance()
-                isSuccess = true // Thoát vòng lặp khi thành công
-            }
-        } catch (error) {
-            console.error('Request failed, retrying...', error)
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 1000)) // Delay 1 giây trước khi thử lại
-    }
-
+worker.onmessage = (event) => {
+    listMail.value.unshift({
+        mail: event.data,
+        pass: null,
+        refresh_token: null,
+        client_id: null,
+        code: null,
+        code_copied: false,
+        mail_copied: false,
+    })
     isloadingBuying.value = false
 }
+
+const buyMail = () => {
+    isloadingBuying.value = true
+    worker.postMessage({ apiKey: form.api_key })
+}
+
+// const buyMail = async () => {
+//     let isSuccess = false
+//     isloadingBuying.value = true
+
+//     while (!isSuccess) {
+//         try {
+//             const { data } = await axiosIns.get('api/otp-services/mail-otp-rental', {
+//                 params: {
+//                     apiKey: form.api_key,
+//                     otpServiceCode: 'facebook',
+//                 },
+//             })
+
+//             if (data.success) {
+//                 const mail = data.gmail
+
+//                 const result = {
+//                     mail,
+//                     pass: null,
+//                     refresh_token: null,
+//                     client_id: null,
+//                     code: null,
+//                     code_copied: false,
+//                     mail_copied: false,
+//                 }
+
+//                 listMail.value.unshift(result)
+//                 checkBalance()
+//                 isSuccess = true // Thoát vòng lặp khi thành công
+//             }
+//         } catch (error) {
+//             console.error('Request failed, retrying...', error)
+//         }
+
+//         await new Promise((resolve) => setTimeout(resolve, 1000)) // Delay 1 giây trước khi thử lại
+//     }
+
+//     isloadingBuying.value = false
+// }
 
 const copyMail = async (index, onlyMail = false) => {
     try {
