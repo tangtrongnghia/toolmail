@@ -56,6 +56,14 @@ const getInfo = async () => {
 }
 
 const saveInfo = () => {
+    if (!form.facebook_link?.length) {
+        return toast('Lỗi chưa nhập link!', {
+            theme: 'auto',
+            type: 'error',
+            dangerouslyHTMLString: true,
+        })
+    }
+
     isLoading.value = true
 
     form.put(route('fb_user.save_info'), {
@@ -113,6 +121,14 @@ const copyToClipboard = (field, text) => {
                                     >
                                         Get Info
                                     </button>
+                                    <button
+                                        class="float-end rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                        :disabled="!form.id || isLoading"
+                                        type="button"
+                                        @click="saveInfo"
+                                    >
+                                        Save
+                                    </button>
                                 </div>
                                 <div class="mb-3">
                                     <div class="relative">
@@ -146,99 +162,80 @@ const copyToClipboard = (field, text) => {
                                         </button>
                                     </div>
                                 </div>
-                                <div class="mb-3">
-                                    <div class="relative">
-                                        <input
-                                            v-model="form.phone"
-                                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                                            placeholder="Phone"
-                                        />
-                                        <button
-                                            class="absolute bottom-2.5 end-2.5 rounded-lg bg-blue-700 px-2 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                            type="button"
-                                            @click="copyToClipboard('phone', form.phone)"
-                                        >
-                                            <span>{{ copyStatus.phone }}</span>
-                                        </button>
-                                    </div>
+                                <div class="relative mb-3">
+                                    <input
+                                        v-model="form.phone"
+                                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                                        placeholder="Phone"
+                                    />
+                                    <button
+                                        class="absolute bottom-2.5 end-2.5 rounded-lg bg-blue-700 px-2 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                        type="button"
+                                        @click="copyToClipboard('phone', form.phone)"
+                                    >
+                                        <span>{{ copyStatus.phone }}</span>
+                                    </button>
                                 </div>
-                                <div class="mb-3">
-                                    <div class="relative">
-                                        <input
-                                            v-model="form.password"
-                                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                                            placeholder="Password"
-                                        />
-                                        <button
-                                            class="absolute bottom-2.5 end-2.5 rounded-lg bg-blue-700 px-2 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                            type="button"
-                                            @click="copyToClipboard('password', form.password)"
-                                        >
-                                            <span>{{ copyStatus.password }}</span>
-                                        </button>
-                                    </div>
+                                <div class="relative mb-3">
+                                    <input
+                                        v-model="form.password"
+                                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                                        placeholder="Password"
+                                    />
+                                    <button
+                                        class="absolute bottom-2.5 end-2.5 rounded-lg bg-blue-700 px-2 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                        type="button"
+                                        @click="copyToClipboard('password', form.password)"
+                                    >
+                                        <span>{{ copyStatus.password }}</span>
+                                    </button>
                                 </div>
-                                <div class="mb-3">
-                                    <div class="relative">
-                                        <input
-                                            v-model="form.email"
-                                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                                            placeholder="Email"
-                                        />
-                                        <button
-                                            class="absolute bottom-2.5 end-2.5 rounded-lg bg-blue-700 px-2 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                            type="button"
-                                            @click="copyToClipboard('email', form.email)"
-                                        >
-                                            <span>{{ copyStatus.email }}</span>
-                                        </button>
-                                    </div>
+                                <div class="relative mb-3">
+                                    <input
+                                        v-model="form.email"
+                                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                                        placeholder="Email"
+                                    />
+                                    <button
+                                        class="absolute bottom-2.5 end-2.5 rounded-lg bg-blue-700 px-2 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                        type="button"
+                                        @click="copyToClipboard('email', form.email)"
+                                    >
+                                        <span>{{ copyStatus.email }}</span>
+                                    </button>
                                 </div>
-                                <div class="mb-3">
-                                    <div class="relative">
-                                        <input
-                                            v-model="form.facebook_link"
-                                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                                            placeholder="Link Facebook"
-                                        />
-                                        <button
-                                            class="absolute bottom-2.5 end-2.5 rounded-lg bg-blue-700 px-2 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                            type="button"
-                                            @click="
-                                                copyToClipboard('facebook_link', form.facebook_link)
-                                            "
-                                        >
-                                            <span>{{ copyStatus.facebook_link }}</span>
-                                        </button>
-                                    </div>
+                                <div class="relative mb-3">
+                                    <input
+                                        v-model="form.facebook_link"
+                                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                                        placeholder="Link Facebook"
+                                    />
+                                    <button
+                                        class="absolute bottom-2.5 end-2.5 rounded-lg bg-blue-700 px-2 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                        type="button"
+                                        @click="
+                                            copyToClipboard('facebook_link', form.facebook_link)
+                                        "
+                                    >
+                                        <span>{{ copyStatus.facebook_link }}</span>
+                                    </button>
                                 </div>
-                                <div class="mb-3">
-                                    <div class="relative">
-                                        <input
-                                            v-model="form.two_fa_secret"
-                                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                                            placeholder="2FA Key"
-                                        />
-                                        <button
-                                            class="absolute bottom-2.5 end-2.5 rounded-lg bg-blue-700 px-2 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                            type="button"
-                                            @click="
-                                                copyToClipboard('two_fa_secret', form.two_fa_secret)
-                                            "
-                                        >
-                                            <span>{{ copyStatus.two_fa_secret }}</span>
-                                        </button>
-                                    </div>
+                                <div class="relative">
+                                    <input
+                                        v-model="form.two_fa_secret"
+                                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                                        placeholder="2FA Key"
+                                    />
+                                    <button
+                                        class="absolute bottom-2.5 end-2.5 rounded-lg bg-blue-700 px-2 py-1 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                        type="button"
+                                        @click="
+                                            copyToClipboard('two_fa_secret', form.two_fa_secret)
+                                        "
+                                    >
+                                        <span>{{ copyStatus.two_fa_secret }}</span>
+                                    </button>
                                 </div>
-
-                                <button
-                                    class="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                    :disabled="!form.id || isLoading"
-                                    type="button"
-                                    @click="saveInfo"
-                                >
-                                    Save
-                                </button>
                             </div>
                         </div>
                     </div>
