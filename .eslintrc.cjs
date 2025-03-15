@@ -53,5 +53,6 @@ module.exports = {
         ],
 
         'vue/attribute-hyphenation': ['error', 'never'],
+        'vue/no-v-text-v-html-on-component': 'off',
     },
 }

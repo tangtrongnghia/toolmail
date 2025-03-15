@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BuyMailController;
 use App\Http\Controllers\FacebookUidController;
+use App\Http\Controllers\FacebookUserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,12 @@ Route::middleware('auth')->group(function () {
 
     // Google 2FA
     Route::get('/google2fa', [FacebookUidController::class, 'google2FA'])->name('google_2fa');
+
+    // Facebook data
+    Route::get('/list-facebook-user', [FacebookUserController::class, 'index'])->name('fb_user.list');
+    Route::get('/list-facebook-user/export-csv', [FacebookUserController::class, 'export'])->name('export.csv');
+    Route::post('/list-facebook-user/import-csv', [FacebookUserController::class, 'import'])->name('import.csv');
+    Route::delete('/list-facebook-user/delete', [FacebookUserController::class, 'delete'])->name('fb_user.delete');
 
 });
 
