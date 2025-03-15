@@ -5,11 +5,12 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libzip-dev \
     zip \
     unzip \
     git \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql opcache
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql opcache zip
 
 # Cài Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
