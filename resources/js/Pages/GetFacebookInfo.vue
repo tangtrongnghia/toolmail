@@ -33,7 +33,7 @@ const copyStatus = ref({
 const getInfo = async () => {
     try {
         isLoading.value = true
-        const { data } = await axios.get(route('fetch_info'))
+        const { data } = await axios.get(route('fb_user.fetch_info'))
 
         if (!data.data) {
             toast('Hết thông tin rồi, import thêm đi bro!', {
@@ -58,7 +58,7 @@ const getInfo = async () => {
 const saveInfo = () => {
     isLoading.value = true
 
-    form.put(route('save_info'), {
+    form.put(route('fb_user.save_info'), {
         onSuccess: () => {
             form.reset()
 

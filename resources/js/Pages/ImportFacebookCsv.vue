@@ -58,7 +58,7 @@ const deleteUser = (all = false) => {
 }
 
 const importCsv = () => {
-    form.post(route('import.csv'), {
+    form.post(route('fb_user.import'), {
         forceFormData: true,
         onSuccess: () => {
             file.value = null
@@ -80,7 +80,7 @@ const importCsv = () => {
 }
 
 const exportCsv = () => {
-    window.open(route('export.csv'), '_blank')
+    window.open(route('fb_user.export'), '_blank')
 }
 </script>
 

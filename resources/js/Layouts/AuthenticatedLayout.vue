@@ -76,6 +76,22 @@ const showingNavigationDropdown = ref(false)
                                     Get UID
                                 </NavLink>
                             </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink
+                                    :active="route().current('fb_user.list')"
+                                    :href="route('fb_user.list')"
+                                >
+                                    List FB
+                                </NavLink>
+                            </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink
+                                    :active="route().current('fb_user.get_info')"
+                                    :href="route('fb_user.get_info')"
+                                >
+                                    Get Info
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
@@ -207,6 +223,18 @@ const showingNavigationDropdown = ref(false)
                             :href="route('facebook_uid.index')"
                         >
                             Get UID
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :active="route().current('fb_user.list')"
+                            :href="route('fb_user.list')"
+                        >
+                            List FB
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :active="route().current('fb_user.get_info')"
+                            :href="route('fb_user.get_info')"
+                        >
+                            Get Info
                         </ResponsiveNavLink>
                     </div>
 
