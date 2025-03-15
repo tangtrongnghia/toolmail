@@ -4,8 +4,9 @@ namespace App\Exports;
 
 use App\Models\FacebookSampleData;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class FacebookSampleDataExport implements FromCollection
+class FacebookSampleDataExport implements FromCollection, WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -19,7 +20,25 @@ class FacebookSampleDataExport implements FromCollection
             'email',
             'password',
             'facebook_link',
+            'facebook_uid',
             'two_fa_secret',
         ]);
+    }
+
+    /**
+     * @return array
+     */
+    public function headings(): array
+    {
+        return [
+            'Last Name',
+            'First Name',
+            'Phone',
+            'Email',
+            'Password',
+            'Link',
+            'UID',
+            '2FA',
+        ];
     }
 }
