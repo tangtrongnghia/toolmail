@@ -60,7 +60,7 @@ watch(secretKey, (v) => {
                         <input
                             v-model="secretKey"
                             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 ps-4 text-sm text-gray-900 focus:shadow-none focus:outline-none focus:ring-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                            placeholder="API Key"
+                            placeholder="2FA Key"
                             @input="secretKey = secretKey.replace(/[^a-zA-Z0-9]/g, '')"
                         />
                     </div>

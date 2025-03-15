@@ -268,7 +268,9 @@ const exportCsv = () => {
                                             <td class="px-3 py-4">{{ data.email ?? '-' }}</td>
                                             <td class="px-3 py-4">{{ data.phone ?? '-' }}</td>
                                             <td class="px-3 py-4">{{ data.password ?? '-' }}</td>
-                                            <td class="px-3 py-4">{{ data.uid ?? '-' }}</td>
+                                            <td class="px-3 py-4">
+                                                {{ data.facebook_uid ?? '-' }}
+                                            </td>
                                             <td class="px-3 py-4">
                                                 <FacebookUserStatus :status="data.status" />
                                             </td>
@@ -284,6 +286,7 @@ const exportCsv = () => {
                                     </tbody>
                                 </table>
                                 <nav
+                                    v-if="facebook_data.data.length"
                                     aria-label="Table navigation"
                                     class="flex-column flex flex-wrap items-center justify-between pt-4 md:flex-row"
                                 >

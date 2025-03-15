@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('password')->nullable();
             $table->string('facebook_link')->nullable();
+            $table->string('facebook_uid')->nullable();
             $table->string('two_fa_secret')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();

@@ -19,6 +19,7 @@ class FacebookSampleData extends Model
         'email',
         'password',
         'facebook_link',
+        'facebook_uid',
         'two_fa_secret',
         'status',
     ];

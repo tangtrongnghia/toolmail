@@ -40,6 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/list-facebook-user/export-csv', [FacebookUserController::class, 'export'])->name('export.csv');
     Route::post('/list-facebook-user/import-csv', [FacebookUserController::class, 'import'])->name('import.csv');
     Route::delete('/list-facebook-user/delete', [FacebookUserController::class, 'delete'])->name('fb_user.delete');
+    Route::get('/get-info', [FacebookUserController::class, 'getInfo'])->name('get_info');
+    Route::get('/fetch-info', [FacebookUserController::class, 'fetchInfo'])->name('fetch_info');
+    Route::put('/save-info', [FacebookUserController::class, 'saveInfo'])->name('save_info');
 
 });
 

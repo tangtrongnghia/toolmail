@@ -19,6 +19,41 @@ class FacebookUserController extends Controller
         return Inertia::render('ImportFacebookCsv', ['facebook_data' => $data]);
     }
 
+    public function getInfo()
+    {
+        return Inertia::render('GetFacebookInfo');
+    }
+
+    public function fetchInfo()
+    {
+        $data = FacebookSampleData::where('status', FacebookSampleData::PENDING)->first();
+
+        if ($data) {
+            $data->status = FacebookSampleData::PROCESSING;
+            $data->save();
+        }
+
+        return response()->json(['data' => $data]);
+    }
+
+    public function saveInfo(Request $request)
+    {
+        $inputs = $request->all();
+        $data = FacebookSampleData::findOrFail($inputs['id']);
+
+        if ($inputs['facebook_link']) {
+            $requestGetUid = new Request(['input' => [$inputs['facebook_link']]]);
+            $uid = app(FacebookUidController::class)->getFacebookUid($requestGetUid);
+            $data->facebook_uid = reset($uid);
+        }
+
+        $data->fill($inputs);
+        $data->status = FacebookSampleData::SUCCESS;
+        $data->save();
+
+        return redirect()->back()->with('success', 'Save Info Successfully!');
+    }
+
     public function import(Request $request)
     {
         $request->validate([
