@@ -12,7 +12,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class FacebookUserController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $data = FacebookSampleData::paginate(10);
 
@@ -26,7 +26,7 @@ class FacebookUserController extends Controller
 
     public function fetchInfo()
     {
-        $data = FacebookSampleData::where('status', FacebookSampleData::PENDING)->first();
+        $data = FacebookSampleData::where('status', FacebookSampleData::PENDING)->inRandomOrder()->first();
 
         if ($data) {
             $data->status = FacebookSampleData::PROCESSING;

@@ -10,6 +10,7 @@ class FacebookSampleData extends Model
     const PROCESSING = 1;
     const SUCCESS = 2;
 
+    public $timestamps = true;
     protected $table = 'facebook_sample_data';
     protected $fillable = [
         'user_id',
@@ -23,4 +24,13 @@ class FacebookSampleData extends Model
         'two_fa_secret',
         'status',
     ];
+
+    public function getStatusAttribute()
+    {
+        if ($this->attributes['status'] == self::PROCESSING && $this->updated_at->diffInMinutes(now()) > 30) {
+            return self::PENDING;
+        }
+
+        return $this->attributes['status'];
+    }
 }
