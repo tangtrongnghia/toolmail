@@ -40,8 +40,8 @@ class FacebookUserController extends Controller
         })
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->paginate(20);
-
+            ->paginate(20)
+            ->appends(request()->query());
 
         $countPending = FacebookSampleData::where('status', FacebookSampleData::PENDING)
             ->orWhere(function ($q) {
