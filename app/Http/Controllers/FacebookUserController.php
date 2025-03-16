@@ -26,11 +26,21 @@ class FacebookUserController extends Controller
 
     public function fetchInfo()
     {
-        $data = FacebookSampleData::where('status', FacebookSampleData::PENDING)->inRandomOrder()->first();
+        $data = FacebookSampleData::where(function ($query) {
+                $query->where('status', FacebookSampleData::PENDING)
+                    ->orWhere(function ($q) {
+                        $q->where('status', FacebookSampleData::PROCESSING)
+                            ->where('updated_at', '<', now()->subMinutes(30));
+                    });
+            })
+            ->inRandomOrder()
+            ->first();
 
         if ($data) {
-            $data->status = FacebookSampleData::PROCESSING;
-            $data->save();
+            $data->forceFill([
+                'status' => FacebookSampleData::PROCESSING,
+                'updated_at' => now(),
+            ])->save();
         }
 
         return response()->json(['data' => $data]);
