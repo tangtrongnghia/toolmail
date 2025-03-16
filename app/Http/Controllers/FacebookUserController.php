@@ -90,7 +90,7 @@ class FacebookUserController extends Controller
     public function delete(Request $request)
     {
         if ($request->input('all')) {
-            FacebookSampleData::truncate();
+            FacebookSampleData::query()->delete();
 
             return redirect()->back()->with('success', 'Delete All Successfully!');
         }
