@@ -14,7 +14,7 @@ class FacebookUserController extends Controller
 {
     public function index()
     {
-        $data = FacebookSampleData::paginate(10);
+        $data = FacebookSampleData::orderByDesc('id')->paginate(10);
 
         return Inertia::render('ImportFacebookCsv', ['facebook_data' => $data]);
     }
