@@ -22,6 +22,10 @@ class FacebookSampleDataImport implements ToCollection, WithHeadingRow
             $now = Carbon::now();
 
             foreach ($chunk as $row) {
+                if (in_array('#ERROR!', [$row['last_name'], $row['first_name'], $row['phone'], $row['password']])) {
+                    continue;
+                }
+
                 $insertData[] = [
                     'user_id' => auth()->user()->id,
                     'last_name' => $row['last_name'],
