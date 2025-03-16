@@ -158,7 +158,7 @@ const exportCsv = () => {
 
                             <div class="relative mt-3 overflow-x-auto shadow-md sm:rounded-lg">
                                 <table
-                                    class="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400"
+                                    class="w-full text-center text-xs text-gray-500 rtl:text-right dark:text-gray-400"
                                 >
                                     <thead
                                         class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
@@ -200,19 +200,19 @@ const exportCsv = () => {
                                                 class="px-3 py-3"
                                                 scope="col"
                                             >
-                                                Email
-                                            </th>
-                                            <th
-                                                class="px-3 py-3"
-                                                scope="col"
-                                            >
                                                 Phone
                                             </th>
                                             <th
                                                 class="px-3 py-3"
                                                 scope="col"
                                             >
-                                                PW
+                                                Email
+                                            </th>
+                                            <th
+                                                class="px-3 py-3"
+                                                scope="col"
+                                            >
+                                                Password
                                             </th>
                                             <th
                                                 class="px-3 py-3"
@@ -224,7 +224,19 @@ const exportCsv = () => {
                                                 class="px-3 py-3"
                                                 scope="col"
                                             >
+                                                2FA
+                                            </th>
+                                            <th
+                                                class="px-3 py-3"
+                                                scope="col"
+                                            >
                                                 Status
+                                            </th>
+                                            <th
+                                                class="px-3 py-3"
+                                                scope="col"
+                                            >
+                                                Updated At
                                             </th>
                                             <th
                                                 class="px-3 py-3"
@@ -265,15 +277,20 @@ const exportCsv = () => {
                                                 {{ data.first_name ?? '-' }}
                                             </th>
                                             <td class="px-3 py-4">{{ data.last_name ?? '-' }}</td>
-                                            <td class="px-3 py-4">{{ data.email ?? '-' }}</td>
                                             <td class="px-3 py-4">{{ data.phone ?? '-' }}</td>
+                                            <td class="px-3 py-4">{{ data.email ?? '-' }}</td>
                                             <td class="px-3 py-4">{{ data.password ?? '-' }}</td>
                                             <td class="px-3 py-4">
                                                 {{ data.facebook_uid ?? '-' }}
                                             </td>
                                             <td class="px-3 py-4">
+                                                {{ data.two_fa_secret ?? '-' }}
+                                            </td>
+                                            <td class="px-3 py-4">
                                                 <FacebookUserStatus :status="data.status" />
                                             </td>
+                                            <td class="px-3 py-4">{{ data.updated_at ?? '-' }}</td>
+
                                             <td class="px-3 py-4">
                                                 <a
                                                     class="font-medium text-blue-600 hover:underline dark:text-blue-500"

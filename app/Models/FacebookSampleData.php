@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Model;
 
 #[ScopedBy([CurrentUserScope::class])]
-class FacebookSampleData extends Model
+class FacebookSampleData extends BaseModel
 {
     const PENDING = 0;
     const PROCESSING = 1;
