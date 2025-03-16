@@ -30,7 +30,7 @@ class FacebookSampleData extends BaseModel
 
     public function getStatusAttribute()
     {
-        if ($this->attributes['status'] == self::PROCESSING && $this->updated_at->diffInMinutes(now()) > 30) {
+        if ($this->attributes['status'] == self::PROCESSING && $this->updated_at->diffInMinutes(now()) > 60) {
             return self::PENDING;
         }
 

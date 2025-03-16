@@ -12,11 +12,57 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class FacebookUserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = FacebookSampleData::orderByDesc('id')->paginate(10);
+        $statusInput = strtolower($request->input('status', 'all'));
+        $status = match ($statusInput) {
+             'pending'=> FacebookSampleData::PENDING,
+             'inprocess' => FacebookSampleData::PROCESSING,
+             'success' => FacebookSampleData::SUCCESS,
+             default => null,
+        };
 
-        return Inertia::render('ImportFacebookCsv', ['facebook_data' => $data]);
+        $data = FacebookSampleData::when($status !== null, function ($query) use ($status) {
+            if ($status == FacebookSampleData::PENDING) {
+                $query->where(function ($q) {
+                    $q->where('status', FacebookSampleData::PENDING)
+                      ->orWhere(function ($subQuery) {
+                          $subQuery->where('status', FacebookSampleData::PROCESSING)
+                                   ->where('updated_at', '<', now()->subMinutes(60));
+                      });
+                });
+            } elseif ($status == FacebookSampleData::PROCESSING) {
+                $query->where('status', FacebookSampleData::PROCESSING)
+                      ->where('updated_at', '>=', now()->subMinutes(60));
+            } else {
+                $query->where('status', $status);
+            }
+        })
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
+            ->paginate(20);
+
+
+        $countPending = FacebookSampleData::where('status', FacebookSampleData::PENDING)
+            ->orWhere(function ($q) {
+                $q->where('status', FacebookSampleData::PROCESSING)
+                  ->where('updated_at', '<', now()->subMinutes(60));
+            })
+            ->count();
+
+        $countProcessing = FacebookSampleData::where('status', FacebookSampleData::PROCESSING)
+            ->where('updated_at', '>=', now()->subMinutes(60))
+            ->count();
+
+        $countSuccess = FacebookSampleData::where('status', FacebookSampleData::SUCCESS)->count();
+
+        return Inertia::render('ImportFacebookCsv', [
+            'facebook_data' => $data,
+            'statusFilter' => $statusInput,
+            'countPending' => $countPending,
+            'countProcessing' => $countProcessing,
+            'countSuccess' => $countSuccess,
+        ]);
     }
 
     public function getInfo()
@@ -30,7 +76,7 @@ class FacebookUserController extends Controller
                 $query->where('status', FacebookSampleData::PENDING)
                     ->orWhere(function ($q) {
                         $q->where('status', FacebookSampleData::PROCESSING)
-                            ->where('updated_at', '<', now()->subMinutes(30));
+                            ->where('updated_at', '<', now()->subMinutes(60));
                     });
             })
             ->inRandomOrder()
