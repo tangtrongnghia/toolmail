@@ -3,9 +3,24 @@ import Google2FA from '@/Components/Google2FA.vue'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, useForm } from '@inertiajs/vue3'
 import axios from 'axios'
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useStorage } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+
+const infoStorage = useStorage('fb-info', {
+    time: new Date(),
+    data: {
+        id: null,
+        last_name: '',
+        first_name: '',
+        phone: '',
+        email: '',
+        password: '',
+        facebook_link: '',
+        two_fa_secret: '',
+    },
+})
 
 const form = useForm({
     id: null,
@@ -16,6 +31,30 @@ const form = useForm({
     password: '',
     facebook_link: '',
     two_fa_secret: '',
+})
+
+onMounted(async () => {
+    if (infoStorage.value.data.id) {
+        const now = new Date()
+        const targetTime = new Date(infoStorage.value.time)
+        const diffInHours = (now - targetTime) / (1000 * 60 * 60)
+
+        if (diffInHours < 2) {
+            try {
+                await axios.get(
+                    route('fb_user.check_status', {
+                        id: infoStorage.value.data.id,
+                    }),
+                )
+
+                Object.assign(form, infoStorage.value.data)
+            } catch (error) {
+                infoStorage.value = null
+            }
+        } else {
+            infoStorage.value = null
+        }
+    }
 })
 
 const isLoading = ref(false)
@@ -43,6 +82,13 @@ const getInfo = async () => {
             })
         }
 
+        infoStorage.value = {
+            time: new Date()
+                .toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' })
+                .replace('T', ' '),
+            data: data.data,
+        }
+
         Object.assign(form, data.data)
     } catch (error) {
         toast('Lỗi rồi!', {
@@ -56,8 +102,8 @@ const getInfo = async () => {
 }
 
 const saveInfo = () => {
-    if (!form.facebook_link?.length) {
-        return toast('Lỗi chưa nhập link!', {
+    if (!form.facebook_link?.length || !isValidFacebookLink(form.facebook_link)) {
+        return toast('Link FB lỗi!', {
             theme: 'auto',
             type: 'error',
             dangerouslyHTMLString: true,
@@ -69,6 +115,7 @@ const saveInfo = () => {
     form.put(route('fb_user.save_info'), {
         onSuccess: () => {
             form.reset()
+            infoStorage.value = null
 
             toast('Save successfully!', {
                 theme: 'auto',
@@ -98,6 +145,34 @@ const copyToClipboard = (field, text) => {
         }, 1000)
     })
 }
+
+const isValidFacebookLink = (link) => {
+    return /^https:\/\/(www\.)?facebook\.com\//.test(link)
+}
+
+watch(form, () => {
+    const { id, first_name, last_name, phone, email, password, facebook_link, two_fa_secret } = form
+
+    if (id) {
+        infoStorage.value = {
+            time: new Date()
+                .toLocaleString('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' })
+                .replace('T', ' '),
+            data: {
+                id,
+                first_name,
+                last_name,
+                phone,
+                email,
+                password,
+                facebook_link,
+                two_fa_secret,
+            },
+        }
+    } else {
+        infoStorage.value = null
+    }
+})
 </script>
 
 <template>

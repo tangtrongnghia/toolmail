@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\FacebookSampleDataExport;
 use App\Imports\FacebookSampleDataImport;
 use App\Models\FacebookSampleData;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -28,12 +29,12 @@ class FacebookUserController extends Controller
                     $q->where('status', FacebookSampleData::PENDING)
                       ->orWhere(function ($subQuery) {
                           $subQuery->where('status', FacebookSampleData::PROCESSING)
-                                   ->where('updated_at', '<', now()->subMinutes(60));
+                                   ->where('updated_at', '<', now()->subHours(2));
                       });
                 });
             } elseif ($status == FacebookSampleData::PROCESSING) {
                 $query->where('status', FacebookSampleData::PROCESSING)
-                      ->where('updated_at', '>=', now()->subMinutes(60));
+                      ->where('updated_at', '>=', now()->subHours(2));
             } else {
                 $query->where('status', $status);
             }
@@ -46,12 +47,12 @@ class FacebookUserController extends Controller
         $countPending = FacebookSampleData::where('status', FacebookSampleData::PENDING)
             ->orWhere(function ($q) {
                 $q->where('status', FacebookSampleData::PROCESSING)
-                  ->where('updated_at', '<', now()->subMinutes(60));
+                  ->where('updated_at', '<', now()->subHours(2));
             })
             ->count();
 
         $countProcessing = FacebookSampleData::where('status', FacebookSampleData::PROCESSING)
-            ->where('updated_at', '>=', now()->subMinutes(60))
+            ->where('updated_at', '>=', now()->subHours(2))
             ->count();
 
         $countSuccess = FacebookSampleData::where('status', FacebookSampleData::SUCCESS)->count();
@@ -76,7 +77,7 @@ class FacebookUserController extends Controller
                 $query->where('status', FacebookSampleData::PENDING)
                     ->orWhere(function ($q) {
                         $q->where('status', FacebookSampleData::PROCESSING)
-                            ->where('updated_at', '<', now()->subMinutes(60));
+                            ->where('updated_at', '<', now()->subHours(2));
                     });
             })
             ->inRandomOrder()
@@ -90,6 +91,20 @@ class FacebookUserController extends Controller
         }
 
         return response()->json(['data' => $data]);
+    }
+
+    public function checkStatus(Request $request, FacebookSampleData $data)
+    {
+        if ($data->status == FacebookSampleData::SUCCESS) {
+            return response()->json(['error' => 'Data is invalid'], 400);
+        }
+
+        $data->forceFill([
+            'status' => FacebookSampleData::PROCESSING,
+            'updated_at' => now(),
+        ])->save();
+
+        return response()->json(['message' => 'Data is valid']);
     }
 
     public function saveInfo(Request $request)

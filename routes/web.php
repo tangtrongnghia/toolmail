@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/list-facebook-user/delete', [FacebookUserController::class, 'delete'])->name('fb_user.delete');
     Route::get('/get-info', [FacebookUserController::class, 'getInfo'])->name('fb_user.get_info');
     Route::get('/fetch-info', [FacebookUserController::class, 'fetchInfo'])->name('fb_user.fetch_info');
+    Route::get('/check-status/{data}', [FacebookUserController::class, 'checkStatus'])->name('fb_user.check_status');
     Route::put('/save-info', [FacebookUserController::class, 'saveInfo'])->name('fb_user.save_info');
 
 });
