@@ -313,7 +313,7 @@ watch(
                                                 :disabled="isLoading"
                                                 @click="copyMail(index, true)"
                                             >
-                                                <span v-if="!item.mail_copied">Copy</span>
+                                                <span v-if="!item.mail_copied">Copy 1</span>
                                                 <span v-else>Copied!</span>
                                             </button>
                                         </th>
@@ -323,24 +323,7 @@ watch(
                                                 class="mb-2 me-2 rounded-lg bg-teal-700 px-3 py-1.5 text-sm text-xs font-medium text-white hover:bg-teal-800 focus:outline-none focus:ring-4 focus:ring-teal-300 dark:bg-teal-600 dark:hover:bg-teal-700 dark:focus:ring-teal-800"
                                                 @click="fetchFacebookCode(index)"
                                             >
-                                                <svg
-                                                    v-show="!isLoading"
-                                                    aria-hidden="true"
-                                                    class="inline h-4 w-4 text-white"
-                                                    fill="none"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    width="24"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"
-                                                        stroke="currentColor"
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                    />
-                                                </svg>
+                                                <span v-show="!isLoading">Check</span>
                                                 <SvgLoading v-show="isLoading" />
                                             </button>
                                             <button
@@ -351,7 +334,7 @@ watch(
                                                 :disabled="!item.code"
                                                 @click="copyCode(index)"
                                             >
-                                                <span v-if="!item.code_copied">Copy</span>
+                                                <span v-if="!item.code_copied">Copy 2</span>
                                                 <span v-else>Copied!</span>
                                             </button>
                                         </td>
@@ -364,7 +347,7 @@ watch(
                                                 :disabled="isLoading"
                                                 @click="copyMail(index)"
                                             >
-                                                <span v-if="!item.mail_copied">Copy</span>
+                                                <span v-if="!item.mail_copied">Copy 3</span>
                                                 <span v-else>Copied!</span>
                                             </button>
                                             <button
