@@ -40,6 +40,11 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql/conf/my.cnf:/etc/mysql/conf.d/my.cnf
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+          cpus: "0.5"
     ports:
       - "3306:3306"
     networks:
