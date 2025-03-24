@@ -39,6 +39,7 @@ services:
       MYSQL_PASSWORD: laravel_password
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./docker/mysql/conf/my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
       - "3306:3306"
     networks:
