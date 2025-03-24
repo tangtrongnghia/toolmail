@@ -60,13 +60,13 @@ onMounted(async () => {
 const isLoading = ref(false)
 
 const copyStatus = ref({
-    first_name: 'Copy',
-    last_name: 'Copy',
-    phone: 'Copy',
-    email: 'Copy',
-    password: 'Copy',
-    facebook_link: 'Copy',
-    two_fa_secret: 'Copy',
+    first_name: 'Copy 1',
+    last_name: 'Copy 2',
+    phone: 'Copy 3',
+    email: 'Copy 4',
+    password: 'Copy 5',
+    facebook_link: 'Copy 6',
+    two_fa_secret: 'Copy 7',
 })
 
 const getInfo = async () => {
@@ -138,10 +138,11 @@ const saveInfo = () => {
 
 const copyToClipboard = (field, text) => {
     navigator.clipboard.writeText(text).then(() => {
+        const oldText = copyStatus.value[field]
         copyStatus.value[field] = 'Copied'
 
         setTimeout(() => {
-            copyStatus.value[field] = 'Copy'
+            copyStatus.value[field] = oldText
         }, 1000)
     })
 }
